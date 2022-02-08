@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaflet Map</title>
+
+    <!-- leaflet css  -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        #map {
+            width: 100%;
+            height: 100vh;
+        }
+
+        #anaglyph {
+            position: absolute;
+            top: 140px;
+            right: 10px;
+            padding: 10px;
+            z-index: 400;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="map">
+        <div class="leaflet-control coordinate"></div>
+    </div>
+
+    <!-- <div id="map"></div>
+    <button id="anaglyph">Make Anaglyph</button> -->
+
+    <div id="map"></div>
+        <form action="/" method="post">
+            <input type="submit" value="Make Anaglyph" id="anaglyph">
+        </form>
+
+</body>
+
+</html>
+
+<!-- leaflet js  -->
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+
+
+<script>
+    // Map initialization 
+    var map = L.map('map').setView([20.5937, 78.9629], 5);
+
+    //Open Street Map View
+    var osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    });
+    osm.addTo(map);
+
+    //google satellite
+    var googleSat = L.tileLayer('http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+        maxZoom: 10,
+        subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
+    });
+    googleSat.addTo(map)
+
+    // Satellite View
+    var satellite = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+        attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+    });
+    satellite.addTo(map)
+
+    // LAYER CONTROL
+    var baseMaps = {
+        "Open Street Map": osm,
+        "Satellite": satellite,
+        "Google Satellite": googleSat
+    };
+
+    L.control.layers(baseMaps).addTo(map);
+
+    // Search Toggle
+    var results = L.Control.geocoder().addTo(map);
+
+    map.on('click', function (e) {
+        var coord = e.latlng;
+        var lat = coord.lat;
+        var lng = coord.lng;
+        console.log("You clicked the map at latitude: " + lat + " and longitude: " + lng);
+
+        lt = lat.toString();
+        ln = lng.toString();
+        var coord = "/" + lt + "_" + ln;
+        document.getElementsByTagName("FORM")[0].setAttribute("action", coord);
+    });
+
+</script>
